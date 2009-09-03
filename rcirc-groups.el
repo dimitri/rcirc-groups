@@ -33,6 +33,23 @@
 (defvar rcirc-groups:conversation-alist nil
   "An alist of conversation buffers and the number of times they mentionned your nick.")
 
+(defun rcirc-groups:conversation-has-been-killed (conversation-entry)
+  "returns t only when conversation's buffer has been killed"
+  (endp (buffer-name (car conversation-entry))))
+
+(defun rcirc-groups:format-conversation (conversation-entry)
+  "pretty print a conversation in a propertized string, return the string"
+  (propertize (buffer-name (car conversation-entry))
+	      
+	      'line-prefix 
+	      (format 
+	       "%s %s "
+	       (format-time-string rcirc-groups:time-format 
+				   (seconds-to-time (cddr elt)))
+	       (cadr elt))
+
+	      'face (if (> (cadr elt) 0) 'rcirc-nick-in-message 'default)))
+
 (defun rcirc-groups:update-conversation-alist (buffer-or-name &optional reset)
   "Replace current values for given conversation buffer"
   (let* ((conversation-entry 
@@ -148,20 +165,9 @@
   (let ((inhibit-read-only t))
     (erase-buffer)
     (dolist (elt rcirc-groups:conversation-alist)
-      (let ((entry-face 'default)
-	    (buffer (if (car elt) (buffer-name (car elt)) "nil")))
-	(when (or rcirc-groups:display-all (> (cadr elt) 0))
-	  (when (> (cadr elt) 0)
-	    (setq entry-face 'rcirc-nick-in-message))
-
-	  (insert (propertize buffer
-			      'line-prefix 
-			      (format "%s %s "
-				      (format-time-string 
-				       rcirc-groups:time-format (seconds-to-time (cddr elt)))
-				      (cadr elt))
-			      'face entry-face))
-	  (insert "\n"))))))
+      (when (and (not (rcirc-groups:conversation-has-been-killed elt))
+		 (or rcirc-groups:display-all (> (cadr elt) 0)))
+	(insert (concat (rcirc-groups:format-conversation elt) "\n"))))))
 
 (defun rcirc-groups:list-mentionned-conversations ()
   "list all conversations where some notification has not yet been acknowledged"
