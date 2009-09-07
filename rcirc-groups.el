@@ -68,8 +68,9 @@
 	  (setq new-notif
 		(if reset 0
 		  (if (and (not buffer-visible) 
-			   (< (time-to-seconds buffer-display-time) 
-			      notification-time))
+			   (or (null buffer-display-time)
+			       (< (time-to-seconds buffer-display-time) 
+				  notification-time)))
 		      (+ 1 notifs)
 		    notifs)))
 
