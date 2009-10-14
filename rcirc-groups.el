@@ -178,7 +178,7 @@
 (defun rcirc-groups:quit-window ()
   "clean the header then quit the window"
   (interactive)
-  (setq header-line-format "")
+  (setq header-line-format nil)
   (quit-window))
 
 (defun rcirc-groups:list-mentionned-conversations ()
