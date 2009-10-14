@@ -101,7 +101,7 @@
     (define-key map (kbd "L")        'rcirc-groups:list-all-conversations)
     (define-key map (kbd "n")        'next-line)
     (define-key map (kbd "p")        'previous-line)
-    (define-key map (kbd "q")        'quit-window)
+    (define-key map (kbd "q")        'rcirc-groups:quit-window)
     
     map)
   "Keymap for `rcirc-groups-mode'.")
@@ -163,12 +163,23 @@
 
 (defun rcirc-groups:list-conversations ()
   "list all conversations where some notification has not yet been acknowledged"
-  (let ((inhibit-read-only t))
-    (erase-buffer)
-    (dolist (elt rcirc-groups:conversation-alist)
-      (when (and (not (rcirc-groups:conversation-has-been-killed elt))
-		 (or rcirc-groups:display-all (> (cadr elt) 0)))
-	(insert (concat (rcirc-groups:format-conversation elt) "\n"))))))
+  (with-current-buffer (get-buffer rcirc-groups:buffer-name)
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (setq header-line-format 
+	    (format "                     Last refresh was at %s" 
+		    (format-time-string "%T")))
+
+      (dolist (elt rcirc-groups:conversation-alist)
+	(when (and (not (rcirc-groups:conversation-has-been-killed elt))
+		   (or rcirc-groups:display-all (> (cadr elt) 0)))
+	  (insert (concat (rcirc-groups:format-conversation elt) "\n")))))))
+
+(defun rcirc-groups:quit-window ()
+  "clean the header then quit the window"
+  (interactive)
+  (setq header-line-format "")
+  (quit-window))
 
 (defun rcirc-groups:list-mentionned-conversations ()
   "list all conversations where some notification has not yet been acknowledged"
@@ -189,7 +200,8 @@
              (not (string= sender (rcirc-nick proc)))
              (not (rcirc-channel-p target)))
 
-    (rcirc-groups:update-conversation-alist (current-buffer))))
+    (rcirc-groups:update-conversation-alist (current-buffer))
+    (rcirc-groups:refresh-conversation-alist)))
 
 (defun rcirc-groups:notify-me (proc sender response target text)
   "update the rcirc-groups:conversation-alist counters"
@@ -198,7 +210,8 @@
 	     (not (string= (rcirc-nick proc) sender))
              (not (string= (rcirc-server-name proc) sender)))
 
-    (rcirc-groups:update-conversation-alist (current-buffer))))
+    (rcirc-groups:update-conversation-alist (current-buffer))
+    (rcirc-groups:refresh-conversation-alist)))
 
 (defun rcirc-groups:create-notify-buffer ()
   "Create the rcirc-groups:buffer-name buffer in read-only"
@@ -215,8 +228,7 @@
   "switch to the groups buffer"
   (interactive)
   (let ((groups-buffer (rcirc-groups:create-notify-buffer)))
-    (with-current-buffer groups-buffer
-      (rcirc-groups:refresh-conversation-alist))
+    (rcirc-groups:refresh-conversation-alist)
     (set-window-buffer (selected-window) groups-buffer)))
 
 (add-hook 'rcirc-print-hooks 'rcirc-groups:privmsg)
