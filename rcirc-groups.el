@@ -101,6 +101,8 @@
     (define-key map (kbd "L")        'rcirc-groups:list-all-conversations)
     (define-key map (kbd "n")        'next-line)
     (define-key map (kbd "p")        'previous-line)
+    (define-key map (kbd "<")        'beginning-of-buffer)
+    (define-key map (kbd ">")        'end-of-buffer)
     (define-key map (kbd "q")        'rcirc-groups:quit-window)
     
     map)
