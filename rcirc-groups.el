@@ -87,7 +87,7 @@
       ;; new buffer we didn't track yet
       (when buffer
 	(setq conversation-entry (cons buffer
-				       (cons 0 notification-time)))
+				       (cons 1 notification-time)))
 	(push conversation-entry rcirc-groups:conversation-alist)))))
 
 (defvar rcirc-groups-mode-map
@@ -202,7 +202,7 @@
   "update the rcirc-groups:conversation-alist counters"
   (interactive)
   (when (and (string= response "PRIVMSG")
-             (not (string= sender (rcirc-nick proc)))
+             (string= sender target)
              (not (rcirc-channel-p target)))
 
     (rcirc-groups:update-conversation-alist (current-buffer))
@@ -238,8 +238,6 @@
 
 (add-hook 'rcirc-print-hooks 'rcirc-groups:privmsg)
 (add-hook 'rcirc-print-hooks 'rcirc-groups:notify-me)
-(add-hook 'rcirc-mode-hook   (lambda ()
-			       (local-set-key (kbd "C-c g") 
-					      'rcirc-groups:switch-to-groups-buffer)))
+(define-key rcirc-mode-map (kbd "C-c g") 'rcirc-groups:switch-to-groups-buffer)
 
 (provide 'rcirc-groups)
