@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://pgsql.tapoueh.org/elisp/rcirc
-;; Version: 0.4
+;; Version: 0.5
 ;; Created: 2009-06-27
 ;; Keywords: IRC rcirc notify
 ;;
