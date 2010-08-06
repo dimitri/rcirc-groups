@@ -116,6 +116,8 @@
   "A major mode for handling rcirc notifications"
   :group 'rcirc-groups
 
+  (setq mode-name "rcirc-groups")
+
   ;; remember whether we display all the conversations or only mentionned ones
   (make-local-variable 'rcirc-groups:display-all)
 
