@@ -1,4 +1,4 @@
-;;; rcirc-groups.el -- an emacs buffer in rcirc-groups major mode
+;;; rcirc-groups.el --- an emacs buffer in rcirc-groups major mode
 ;;
 ;; Copyright (c) 2009 Dimitri Fontaine
 ;;
@@ -6,7 +6,7 @@
 ;; URL: http://tapoueh.org/emacs/rcirc-groups.html
 ;; Version: 0.5
 ;; Created: 2009-06-27
-;; Keywords: IRC rcirc notify
+;; Keywords: comm, convenience
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
@@ -40,11 +40,11 @@
 (defun rcirc-groups:format-conversation (conversation-entry)
   "pretty print a conversation in a propertized string, return the string"
   (propertize (buffer-name (car conversation-entry))
-	      
-	      'line-prefix 
-	      (format 
+
+	      'line-prefix
+	      (format
 	       "%s %s "
-	       (format-time-string rcirc-groups:time-format 
+	       (format-time-string rcirc-groups:time-format
 				   (seconds-to-time (cddr elt)))
 	       (cadr elt))
 
@@ -52,7 +52,7 @@
 
 (defun rcirc-groups:update-conversation-alist (buffer-or-name &optional reset)
   "Replace current values for given conversation buffer"
-  (let* ((conversation-entry 
+  (let* ((conversation-entry
 	  (assoc (get-buffer buffer-or-name) rcirc-groups:conversation-alist))
 	 (notifs (cadr conversation-entry))
 	 (buffer (get-buffer buffer-or-name))
@@ -67,9 +67,9 @@
 	  ;; work out if we want to increment how many notifs we're lagging behind
 	  (setq new-notif
 		(if reset 0
-		  (if (and (not buffer-visible) 
+		  (if (and (not buffer-visible)
 			   (or (null buffer-display-time)
-			       (< (time-to-seconds buffer-display-time) 
+			       (< (time-to-seconds buffer-display-time)
 				  notification-time)))
 		      (+ 1 notifs)
 		    notifs)))
@@ -81,7 +81,7 @@
 		 (car conversation-entry) rcirc-groups:conversation-alist))
 
 	  (push (cons (car conversation-entry)
-		      (cons new-notif notification-time)) 
+		      (cons new-notif notification-time))
 		rcirc-groups:conversation-alist))
 
       ;; new buffer we didn't track yet
@@ -104,7 +104,7 @@
     (define-key map (kbd "<")        'beginning-of-buffer)
     (define-key map (kbd ">")        'end-of-buffer)
     (define-key map (kbd "q")        'rcirc-groups:quit-window)
-    
+
     map)
   "Keymap for `rcirc-groups-mode'.")
 
@@ -152,7 +152,7 @@
   "catchup conversation reinits the conversation-alist entry for current buffer"
   (interactive)
   (let* ((conversation-buffer (buffer-substring
-				(line-beginning-position) (line-end-position))))    
+				(line-beginning-position) (line-end-position))))
     (rcirc-groups:update-conversation-alist conversation-buffer t)
     (rcirc-groups:refresh-conversation-alist)))
 
@@ -173,8 +173,8 @@
     (with-current-buffer groups-buffer
       (let ((inhibit-read-only t))
 	(erase-buffer)
-	(setq header-line-format 
-	      (format "                     Last refresh was at %s" 
+	(setq header-line-format
+	      (format "                     Last refresh was at %s"
 		      (format-time-string "%T")))
 
 	(dolist (elt rcirc-groups:conversation-alist)
@@ -243,3 +243,4 @@
 (define-key rcirc-mode-map (kbd "C-c g") 'rcirc-groups:switch-to-groups-buffer)
 
 (provide 'rcirc-groups)
+;;; rcirc-groups.el ends here
