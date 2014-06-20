@@ -167,9 +167,8 @@
 
 (defun rcirc-groups:list-conversations ()
   "list all conversations where some notification has not yet been acknowledged"
-  (let ((groups-buffer (get-buffer rcirc-groups:buffer-name)))
-    (unless groups-buffer (rcirc-groups:create-notify-buffer))
-
+  (let ((groups-buffer (or (get-buffer rcirc-groups:buffer-name)
+                           (rcirc-groups:create-notify-buffer))))
     (with-current-buffer groups-buffer
       (let ((inhibit-read-only t))
 	(erase-buffer)
