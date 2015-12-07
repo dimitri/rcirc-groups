@@ -35,7 +35,7 @@
 
 (defun rcirc-groups:conversation-has-been-killed (conversation-entry)
   "returns t only when conversation's buffer has been killed"
-  (endp (buffer-name (car conversation-entry))))
+  (string= "" (buffer-name (car conversation-entry))))
 
 (defun rcirc-groups:format-conversation (conversation-entry)
   "pretty print a conversation in a propertized string, return the string"
