@@ -45,10 +45,10 @@
 	      (format
 	       "%s %s "
 	       (format-time-string rcirc-groups:time-format
-				   (seconds-to-time (cddr elt)))
-	       (cadr elt))
+				   (seconds-to-time (cddr conversation-entry)))
+	       (cadr conversation-entry))
 
-	      'face (if (> (cadr elt) 0) 'rcirc-nick-in-message 'default)))
+	      'face (if (> (cadr conversation-entry) 0) 'rcirc-nick-in-message 'default)))
 
 (defun rcirc-groups:update-conversation-alist (buffer-or-name &optional reset)
   "Replace current values for given conversation buffer"
