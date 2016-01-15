@@ -39,16 +39,20 @@
 
 (defun rcirc-groups:format-conversation (conversation-entry)
   "pretty print a conversation in a propertized string, return the string"
-  (propertize (buffer-name (car conversation-entry))
+  (message "rcirc-groups:format-conversation: %s" conversation-entry)
+  (let ((buffer-name (when (and (bufferp (car conversation-entry)))
+                       (buffer-name (car conversation-entry)))))
+    (when (and buffer-name (stringp buffer-name))
+      (message "rcirc-groups:format-conversation: propertizing %s" buffer-name)
+      (propertize buffer-name
+                  'line-prefix
+                  (format
+                   "%s %s "
+                   (format-time-string rcirc-groups:time-format
+                                       (seconds-to-time (cddr conversation-entry)))
+                   (cadr conversation-entry))
 
-	      'line-prefix
-	      (format
-	       "%s %s "
-	       (format-time-string rcirc-groups:time-format
-				   (seconds-to-time (cddr elt)))
-	       (cadr elt))
-
-	      'face (if (> (cadr elt) 0) 'rcirc-nick-in-message 'default)))
+                  'face (if (> (cadr elt) 0) 'rcirc-nick-in-message 'default)))))
 
 (defun rcirc-groups:update-conversation-alist (buffer-or-name &optional reset)
   "Replace current values for given conversation buffer"
