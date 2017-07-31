@@ -7,6 +7,7 @@
 ;; Version: 0.5
 ;; Created: 2009-06-27
 ;; Keywords: comm, convenience
+;; License: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
